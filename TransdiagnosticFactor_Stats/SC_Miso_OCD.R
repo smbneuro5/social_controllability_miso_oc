@@ -389,9 +389,22 @@ db_sc_long <- subset(db_sc_long, select = c(prolific_id, miso_group, mood_group,
                                             NormSensitivity, Gap, Delta))
 
 
-#### Create Histograms and get numbers for Figure 2 ####
+#### Create Histograms and get numbers for Figure 1 ####
 
 #AMISOS
+breaks <- pretty(range(db_q$amisos_score),
+                 n = nclass.Sturges(db_q$amisos_score),
+                 min.n = 1)
+
+h= hist(db_q$amisos_score, plot=T, breaks=c(0:20))
+my_color= ifelse(h$breaks <= 4, rgb(0.2,0.8,0.5,0.5) , ifelse (h$breaks >4 & h$breaks <=9, "blue", ifelse (h$breaks >9 & h$breaks <=14, "navy", ifelse (h$breaks >14 & h$breaks <=19, "purple", ifelse (h$breaks >19, "black", rgb(0.2,0.2,0.2,0.2))))))
+plot(h, col=my_color , border=F , main="" , xlab="A-MISO-S Total Score", xlim=c(0,20), ylim=c(0,200), xaxt="n")
+legend(x=11, y=325, legend=c("Subclinical (0-4), 45.1%", "Mild (5-9), 39.4%", "Moderate (10-14), 14.3%", "Severe (15-19), 1.2%"),
+       col=c(rgb(0.2,0.8,0.5,0.5), "blue", "navy","purple"),  cex=.75,
+       box.lty=0, pch=15,  x.intersp=.3, y.intersp=.1, border ="transparent", bg="transparent")
+axis(side=1,at=h$mids,labels=seq(0,19))
+
+#Alternative visualization, also AMISOS
 ggplot(db_q, aes(amisos_score)) +
   geom_histogram(binwidth = 0.5) +
   labs(x = "A-MISO-S Total Score", y = "Count") +
@@ -428,6 +441,12 @@ t.test(db_full_f3$age ~ db_full_f3$miso_group)
 oneway.test(db_full_f3$sex ~ db_full_f3$miso_group, var.equal = TRUE) 
 tabyl(db_full_f3, sex, miso_group) #get count per group
 #low miso group has significantly more men
+
+##Gender
+oneway.test(db_full_f3$gender ~ db_full_f3$miso_group, var.equal = TRUE) 
+tabyl(db_full_f3, gender, miso_group) #get count per group
+#low miso group has significantly more men
+
 
 ##Education
 oneway.test(db_full_f3$edu_level ~ db_full_f3$miso_group, var.equal = TRUE) 
